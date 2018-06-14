@@ -1,0 +1,24 @@
+body {
+    width: 100%;
+    background-color: #a1a1a1;
+}
+#header {
+    display: inline-block;
+    position: relative;
+    width: 100%;
+    background-color: #367f3a;
+    height: 5%;
+}
+#notespace {
+    display: flex;
+}
+.note {
+    margin: 2em;
+    background-color: #c9c9c9;
+    width: auto;
+    height: auto;
+}
+.note textarea {
+    height: 200px;
+    width: 200px;
+}
