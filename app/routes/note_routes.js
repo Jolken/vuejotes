@@ -1,9 +1,6 @@
 var ObjectID = require('mongodb').ObjectID;
 module.exports = function(app, db) {
   var database = db.db('notes');
-  app.get('/notes/', (req, res) => {
-      res.sendFile();
-  });
   app.get('/api/notes/', (req, res) => {
     const collection = database.collection('notes')
     collection.find({}).toArray((err, result) => {
