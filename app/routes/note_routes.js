@@ -8,7 +8,7 @@ module.exports = function(app, db) {
               res.send({ 'error' : 'An error has occured'});
           }
           else {
-            res.send(result);
+            res.json(result);
           }
               
           });
