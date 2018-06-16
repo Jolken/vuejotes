@@ -1,9 +1,7 @@
 window.onload = () => {
-//https://agile-badlands-99964.herokuapp.com/api/notes
-    var notespace = document.getElementById("notespace");
-    var createNote = (title, text) => {
-        notespace.innerHTML += '<div class="note"><header class="noteheader"><input type="text" value="'+ title +'"></header><textarea>'+ text +'</textarea></div>';
-    };
+    loadNotes();
+};
+function loadNotes() {
     var xhr = new XMLHttpRequest();
     xhr.open('GET', 'https://agile-badlands-99964.herokuapp.com/api/notes', false);
     xhr.setRequestHeader('Content-Type', 'application/json');
@@ -11,10 +9,24 @@ window.onload = () => {
     if (xhr.status != 200) {
         alert(xhr.status + ': ' + xhr.statusText);
     } else {
-        var notes = xhr.response;
+        var notes = eval('(' + xhr.response + ')');;
     }
-    console.log(notes);
+    notes.forEach(element => {
+        createNote(element['_id'], element.title, element.text);
+    });
+}
 
-
-
-};
+function createNote(id, title, text) {
+    notespace.innerHTML += '<div class="note" id="' + id + '"><header class="noteheader"><input type="text" value="' + title + '"><button onclick="deleteNote(this)">DEL</button></header><textarea>' + text + '</textarea></div>';
+}
+function deleteNote(element) {
+    var id = element.parentElement.parentElement.id;
+    var xhr = new XMLHttpRequest();
+    xhr.open('DELETE', 'https://agile-badlands-99964.herokuapp.com/api/notes/'+id);
+    xhr.send();
+    if (xhr.status != 200) {
+        console.log(xhr.status + ': ' + xhr.statusText);
+    } else {
+        console.log(xhr.responseText);
+    }
+}
