@@ -1,9 +1,10 @@
+var APIURL = 'https://agile-badlands-99964.herokuapp.com/api/notes/';
 window.onload = () => {
     loadNotes();
 };
 function loadNotes() {
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', 'https://agile-badlands-99964.herokuapp.com/api/notes', false);
+    xhr.open('GET', APIURL, false);
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.send();
     if (xhr.status != 200) {
@@ -19,11 +20,24 @@ function loadNotes() {
 function createNote(id, title, text) {
     notespace.innerHTML += '<div class="note" id="' + id + '"><header class="noteheader"><input type="text" value="' + title + '"><button onclick="deleteNote(this)">DEL</button></header><textarea>' + text + '</textarea></div>';
 }
+
 function deleteNote(element) {
     var id = element.parentElement.parentElement.id;
     var xhr = new XMLHttpRequest();
-    xhr.open('DELETE', 'https://agile-badlands-99964.herokuapp.com/api/notes/'+id);
+    xhr.open('DELETE', APIURL+id);
     xhr.send();
+    if (xhr.status != 200) {
+        console.log(xhr.status + ': ' + xhr.statusText);
+    } else {
+        console.log(xhr.responseText);
+    }
+}
+
+function addNote() {
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', APIURL, false);
+    xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+    xhr.send({'body': '', 'title': ''});
     if (xhr.status != 200) {
         console.log(xhr.status + ': ' + xhr.statusText);
     } else {
