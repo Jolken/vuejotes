@@ -1,9 +1,11 @@
+const BASE_URL = 'https://agile-badlands-99964.herokuapp.com/api/'
 window.onload = () => {
     loadNotes();
 };
 function loadNotes() {
+    notespace.innerHTML = '';
     var xhr = new XMLHttpRequest();
-    xhr.open('GET', 'https://agile-badlands-99964.herokuapp.com/api/notes', false);
+    xhr.open('GET', BASE_URL+'notes', false);
     xhr.setRequestHeader('Content-Type', 'application/json');
     xhr.send();
     if (xhr.status != 200) {
@@ -22,8 +24,22 @@ function createNote(id, title, text) {
 function deleteNote(element) {
     var id = element.parentElement.parentElement.id;
     var xhr = new XMLHttpRequest();
-    xhr.open('DELETE', 'https://agile-badlands-99964.herokuapp.com/api/notes/'+id);
+    xhr.open('DELETE', BASE_URL+'notes/'+id, false);
     xhr.send();
+    if (xhr.status != 200) {
+        console.log(xhr.status + ': ' + xhr.statusText);
+    } else {
+        console.log(xhr.responseText);
+    }
+}
+function addNote() {
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', BASE_URL+'notes', false);
+    xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+    xhr.send({
+        'body' : 'Text of my note',
+        'title' : 'Note title'
+    });
     if (xhr.status != 200) {
         console.log(xhr.status + ': ' + xhr.statusText);
     } else {
