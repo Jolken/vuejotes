@@ -3,7 +3,8 @@ window.onload = () => {
     loadNotes();
 };
 function loadNotes() {
-    notespace.innerHTML = '';
+    notespace = document.querySelector('.notespace');
+    document.innerHTML = '<i class="fa fa-refresh fa-spin fa-3x fa-fw"></i>';
     var xhr = new XMLHttpRequest();
     xhr.open('GET', BASE_URL+'notes', false);
     xhr.setRequestHeader('Content-Type', 'application/json');
@@ -13,13 +14,15 @@ function loadNotes() {
     } else {
         var notes = eval('(' + xhr.response + ')');;
     }
+    notespace.innerHTML = '';
     notes.reverse().forEach(element => {
         createNote(element['_id'], element.title, element.text);
     });
+    notespace.innerHTML += '<article class="note noteimg"><i class="fa fa-plus-circle fa-5x cursor" aria - hidden="true" onclick = "addNote()"></i ></article >'
 }
 
 function createNote(id, title, text) {
-    notespace.innerHTML += '<div class="note" id="' + id + '"><header class="noteheader"><input type="text" value="' + title + '" class="noteTitle"><button onclick="deleteNote(this)">DEL</button><button onclick="saveNote(this)">Save</button></header><textarea class="noteText">' + text + '</textarea></div>';
+    notespace.innerHTML += '<article class="note" id = "'+id+'" ><input value="'+title+'" class="noteTitle"><textarea class="noteText">'+text+'</textarea><div class="controlButtons"><i class="fa fa-trash-o cursor" aria-hidden="true" onclick="deleteNote(this)"></i><i class="fa fa-floppy-o cursor" aria-hidden="true" onclick="saveNote(this)"></i></div></article>'
 }
 
 function deleteNote(button) {

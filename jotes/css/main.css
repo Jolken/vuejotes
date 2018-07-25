@@ -1,0 +1,103 @@
+@import url('https://fonts.googleapis.com/css?family=Do+Hyeon|Oswald|Ubuntu');
+
+body {
+    width: 99%;
+    background-color: #E2DCDE;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+a {
+    color: inherit;
+    text-decoration: none;
+}
+.navig {
+    font-size: 2vw;
+    font-family: 'Do Hyeon', sans-serif;
+}
+.navig > ul {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    list-style-type: none;
+}
+li.links:hover {
+    color:#216C6C;
+}
+.notespace {
+    display: flex;
+    width: 99%;
+    background-color: #F1E4E8;
+    height: 80%;
+    position: absolute;
+}
+.note {
+    display: flex;
+    flex-direction: column;
+    width:40%;
+    height: 40%;
+    margin: 1%;
+    padding: 3px;
+    background-color: #F5DD90;
+    border: 1px solid #f1f1f1;
+    
+}
+.note textarea, input {
+    background-color: #F5DD90;
+    border: none;
+}
+.noteTitle {
+    font-family: 'Oswald', sans-serif;
+    text-align: center;
+    height: 20%;
+    font-size: 4vw;
+}
+.noteText {
+    font-family: 'Ubuntu', sans-serif;
+    height: 80%;
+    text-align: center;
+    font-size: 3vw;
+}
+.controlButtons {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    margin: 1%;
+    font-size: 3vw;
+    padding: 1%;
+}
+.noteimg {
+    background: inherit;
+    border: none;
+    font-size: 4vw;
+}
+.noteimg > img {
+    width: 100%;
+    height: 100%;
+    
+}
+.fa-trash-o:hover {
+    color: #B43636;
+}
+.fa-floppy-o:hover{
+    color: #496490;
+}
+.cursor {
+    cursor: pointer;
+    opacity: 0.4;
+}
+.cursor:hover {
+    opacity: 0.9;
+}
+.footer {
+    font-size: 3vw;
+    display: flex;
+    width:99%;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 5rem;
+    justify-content: space-between;
+    align-self: center;
+}
+.footer i {
+    margin-left: 50%;
+}

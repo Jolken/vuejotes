@@ -2,25 +2,30 @@
 <html>
     <head>
         <title>Jotes</title>
-        <meta charset='utf-8'>
-        <link rel='stylesheet' href='public/css/main.css'>
-        <script src='public/js/script.js'></script>
+        <link rel="stylesheet" href="public/main.css">
+        <script src="public/script.js"></script>
+        <link rel="stylesheet" href="public/font-awesome/css/font-awesome.min.css">
     </head>
-    
     <body>
-        <header id="header">
-            <div id="headbuttons">
-                <button class="headbtn" onclick="addNote()">Add Note</button>
-                <button class="headbtn" onclick="loadNotes()">Update</button>
-            </div>
+        <header>
+            <nav class="navig">
+                <ul>
+                    <li class="links"><a href="#">About <i class="fa fa-address-book-o" aria-hidden="true"></i></a></li>
+                    <li class="links"><a href="#">Instagram <i class="fa fa-instagram" aria-hidden="true"></i></a></li>
+                    <li class="links"><a href="#">GitHub <i class="fa fa-github" aria-hidden="true"></i></a></li>
+                </ul>
+            </nav>
         </header>
-        <div id="notespace">
- 
-        </div>
-        <footer>
-            
-            
-        </footer>
+        <section class="notespace">
+
+        </section>
+        <section class="right-panel">
+            <div class="right-buttons">
+                <i class="fa fa-refresh cursor" onclick="loadNotes()"></i>
+            </div>
+        </section>
+
     </body>
+
     
 </html>
