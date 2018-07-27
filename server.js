@@ -6,7 +6,7 @@ const cors           = require('cors');
 const app            = express();
 const port = process.env.PORT || 5000;
 var path = require('path');
-global.APPROOT = path.resolve(__dirname);
+global.APP_ROOT = path.resolve(__dirname);
 app.use(bodyParser.urlencoded({ extended: true}));
 app.use('/public', express.static('public'));
 app.use(cors());

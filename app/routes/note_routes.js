@@ -3,7 +3,7 @@ var path = require('path');
 module.exports = function(app, db) {
   var database = db.db('notes');
     app.get('/', (req, res) => {
-        res.sendFile(APPROOT+'/public/notes/notes.html');
+        res.sendFile(APP_ROOT+'/public/notes/notes.html');
     });
   app.get('/api/notes/', (req, res) => {
     const collection = database.collection('notes')
