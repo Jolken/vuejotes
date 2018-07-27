@@ -1,4 +1,4 @@
-const BASE_URL = 'https://jolken.herokuapp.com/api/notes';
+const BASE_URL = 'https://jolken.herokuapp.com/api/';
 window.onload = () => {
     loadNotes();
 };
