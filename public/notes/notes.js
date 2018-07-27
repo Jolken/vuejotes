@@ -1,4 +1,4 @@
-const BASE_URL = 'https://agile-badlands-99964.herokuapp.com/api/'
+const BASE_URL = 'https://jolken.herokuapp.com/api/notes';
 window.onload = () => {
     loadNotes();
 };
