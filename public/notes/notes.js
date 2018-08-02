@@ -1,7 +1,5 @@
 const BASE_URL = 'https://jolken.herokuapp.com/api/';
-window.onload = () => {
-    loadNotes();
-};
+
 function sendReqeust(method, url, data) {
     return new Promise((resolve, reject) => {
         var xhr = new XMLHttpRequest();
@@ -10,7 +8,7 @@ function sendReqeust(method, url, data) {
         xhr.onload = (() => {
             if (xhr.status >= 200 && xhr.status < 300) {
                 resolve(xhr.response);
-            } 
+            }
             else {
                 reject({
                     status: xhr.status,
@@ -27,70 +25,113 @@ function sendReqeust(method, url, data) {
         xhr.send(data);
     });
 }
+function setIndexes(obj, arr) {
+    obj[arr].map((element, index) => {
+        element.index = index;
+    });
+}
+
+
+
+
 function createRequestBody(data) {
     data.title = data.title || 'Note title';
     data.text = data.text || 'Text of my note';
     return ('title=' + data.title.replace(/ /g, "+") + '&body=' + data.text.replace(/ /g, "+"))
 }
-function loadNotes() {
-    notespace = document.querySelector('.notespace');
-    sendReqeust('GET', BASE_URL+'notes', {})
-    .then((response) => {
-        let notes = eval('(' + response + ')');
-        notespace.innerHTML = '';
-        notes.reverse().forEach(element => {
-            createNote(element['_id'], element.title, element.text);
-        });
-        notespace.innerHTML += '<article class="note noteimg"><i class="fa fa-plus-circle fa-5x cursor" aria - hidden="true" onclick = "addNote()"></i ></article >'
-    })
-    .catch((err) => {
-        console.log(err);
-    });
-    
-}
 
-function createNote(id, title, text) {
-    notespace.innerHTML += '<article class="note" id = "' + id + '" ><input value="' + title + '" class="noteTitle"><textarea class="noteText">' + text + '</textarea><div class="controlButtons"><i class="fa fa-trash-o cursor" aria-hidden="true" onclick="deleteNote(this)"></i><i class="fa fa-floppy-o cursor" aria-hidden="true" onclick="saveNote(this)"></i></div></article>'
-}
+window.onload = () => {
+    var notespace = new Vue({
+        el: '#notespace',
+        data: {
+            notes: [],
+        },
+        created: function() {
+            this.loadNotes();
+        },
+        methods : {
+            loadNotes() {
+                sendReqeust('GET', BASE_URL + 'notes', {})
+                    .then((response) => {
+                        this.notes = [];
+                        let notes = eval('(' + response + ')');
+                        notes.forEach((note) => {
+                            this.pushNote(note);
+                        });
+                        setIndexes(notespace, 'notes');
+                    })
+                    .catch((err) => {
+                        console.log(err);
+                    });
+            },
+            addNote() {
+                sendReqeust('POST', BASE_URL + 'notes/', createRequestBody({
+                    'title': 'Note title',
+                    'text': 'Text of my note'
+                }))
+                    .then((response) => {
+                        this.pushNote(eval('(' + response + ')'))
+                    })
+                    .catch((err) => {
+                        console.error(err);
+                        alert('Can not create new note');
+                    }); 
+            },
+            pushNote(noteData) {
+                this.notes.push(
+                    new Vue({
+                        data() {
+                            return {
+                                id: noteData._id,
+                                text: noteData.text,
+                                title: noteData.title,
+                                index: 0,
+                            }
+                        },
+                        watch: {
+                            text(text) {
+                                this.debSave();
+                            },
+                            title(title) {
+                                this.debSave();
+                            }
+                        },
+                        
+                        created() {
+                            this.debSave = _.debounce(this.saveNote, 1000);
+                        },
+                        
+                        methods: {
+                            saveNote() {
+                                sendReqeust('PUT', BASE_URL + 'notes/' + this.id, createRequestBody({
+                                    title: this.title,
+                                    text: this.text,
+                                }))
+                                    .then((response) => {
+                                        console.log(response);
+                                    })
+                                    .catch((err) => {
+                                        console.error(err);
+                                        alert('Can not save note with title: \n' + data.title);
+                                    });
+                            },
+                            deleteNote() {
+                                sendReqeust('DELETE', BASE_URL + 'notes/' + this.id)
+                                    .then((response) => {
+                                        console.log(response);
+                                        notespace.notes.splice(this.index, 1);
+                                        setIndexes(notespace, 'notes');
+                                    })
+                                    .catch((err) => {
+                                        console.error(err);
+                                    });
 
-function deleteNote(button) {
-    let note = button.parentElement.parentElement;
-    let id = note.id;
-    sendReqeust('DELETE', BASE_URL+'notes/'+id)
-    .then((response) => {
-        console.log(response);
-        loadNotes();
-    })
-    .catch((err) => {
-        console.error(err);
+                            },
+                        },
+                    }));
+            },
+        },
+
+
     });
-}
-function saveNote(button) {
-    let note = button.parentElement.parentElement;
-    let id = note.id;
-    let data = {};
-    data.title = note.querySelector(".noteTitle").value;
-    data.text = note.querySelector(".noteText").value;
-    sendReqeust('PUT', BASE_URL+'notes/'+id, createRequestBody(data))
-    .then((response) => {
-        console.log(response);
-        loadNotes();
-    })
-    .catch((err) => {
-        console.error(err);
-        alert('Can not save note with title: \n'+data.title);
-    });
-}
-function addNote() {
-    sendReqeust('POST', BASE_URL + 'notes/', createRequestBody({ 
-        'title': 'Note title', 
-        'text':'Text of my note'}))
-    .then((response) => {
-        console.log(response);
-        loadNotes();
-    })
-    .catch((err) => {
-        console.error(err);
-        alert('Can not create new note');
-    }); 
 }

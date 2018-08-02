@@ -3,9 +3,9 @@
     <head>
         <title>Jotes</title>
         <link rel="stylesheet" href="/public/font-awesome-470/css/font-awesome.min.css">
-        <link rel="stylesheet" href="notes.css">
-        <script src="https://cdn.jsdelivr.net/npm/lodash@4.13.1/lodash.min.js"></script>
-        <script src="vuetest.js"></script>
+        <link rel="stylesheet" href="/public/notes/notes.css">
+        <script src="/public/lodash/lodash.min.js"></script>
+        <script src="/public/notes/notes.js"></script>
     <script src="/public/vue/vue.js"></script>
     </head>
     <body>
@@ -19,7 +19,13 @@
             </nav>
         </header>
         <section class="notespace" id="notespace">
-            <i class="fa fa-plus cursor" @click="addNote()"></i>
+            <section class="right-panel">
+            <div class="right-buttons">
+                <i class="fa fa-refresh cursor" @click="loadNotes()"></i>
+                <i class="fa fa-plus cursor" @click="addNote()"></i>
+            </div>
+            </section>
+            
             <article v-for="note in notes" class="note" v-bind:id="note.id">
                 <input v-model="note.title" class="noteTitle">
                 <textarea class="noteText" v-model="note.text"></textarea>
@@ -29,10 +35,10 @@
                 </article>
             </div>
         </section>
+        
         <section class="right-panel">
             <div class="right-buttons">
                 
-                <i class="fa fa-refresh cursor" @click="loadNotes()"></i>
             </div>
         </section>
 

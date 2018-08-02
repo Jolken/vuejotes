@@ -49,6 +49,7 @@ li.links:hover {
     text-align: center;
     height: 20%;
     font-size: 4vw;
+    padding: 1%;
 }
 .noteText {
     font-family: 'Ubuntu', sans-serif;
