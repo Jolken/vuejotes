@@ -5,6 +5,90 @@ module.exports = function(app, db) {
     app.get('/', (req, res) => {
         res.sendFile(APP_ROOT+'/public/notes/notes.html');
     });
+    app.post('/auth/login/', (req, res) => {
+        const users = database.collection('users');
+        users.findOne({ '_id' : req.body.username }, (err, result)=> {
+            if (err) {
+                res.send({ 'error': err });
+            }
+            else {
+                if (result.password == req.body.password) {
+                    res.send({'login' : 'success' });
+                }
+                else {
+                    res.send({'login' : 'failed' });
+                }
+            }
+            
+        });
+    });
+    app.post('/auth/register/', (req, res) => {
+        const users = database.collection('users');
+        let username = req.body.username;
+        let password = req.body.password;
+        users.findOne({ '_id': username }, (err, result) => {
+            if (result || err){
+                res.send({'err': 'user already exist'});
+            }
+            else {
+                users.insert({ '_id': username, 'password': password }, (err, result) => {
+                    if (err) {
+                        res.send({ 'err': err });
+                    }
+                    else {
+                        res.send(result);
+                        database.createCollection(username);
+                    }
+                });
+            }
+    });
+    });
+    app.post('/auth/update', (req, res) => {
+        const users = database.collection('users');
+        users.findOne({ '_id': req.body.username }, (err, result) => {
+            if (err) {
+                res.send({'err' : err});
+            }
+            else {
+                if (result.password != req.body.passwordOld) {
+                    res.send({'update' : 'password dont match'})
+                }
+                else {
+                    users.update({ '_id': req.body.username }, {'password' : req.body.passwordNew}, (err, result) => {
+                        if (err) {
+                            res.send({ 'err': err });
+                        }
+                        else {
+                            res.send(result);
+                        }
+                    });
+                }
+            }
+        });
+    });
+    app.post('/auth/delete', (req, res) => {
+        const users = database.collection('users');
+        users.findOne({ '_id': req.body.username }, (err, result) => {
+            if (err) {
+                res.send({ 'err': err });
+            }
+            else {
+                if (result.password != req.body.password) {
+                    res.send({ 'delete': 'password dont match' })
+                }
+                else {
+                    users.remove({ '_id': req.body.username }, (err, result) => {
+                        if (err) {
+                            res.send({ 'err': err });
+                        }
+                        else {
+                            res.send(result);
+                        }
+                    });
+                }
+            }
+        });
+    });
   app.get('/api/notes/', (req, res) => {
     const collection = database.collection('notes')
     collection.find({}).toArray((err, result) => {
