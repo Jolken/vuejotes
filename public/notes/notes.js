@@ -4,7 +4,7 @@ function sendReqeust(method, url, data) {
     return new Promise((resolve, reject) => {
         var xhr = new XMLHttpRequest();
         xhr.open(method, url, true);
-        xhr.setRequestHeader("Content-type", "application/json");
+        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         xhr.onload = (() => {
             if (xhr.status >= 200 && xhr.status < 300) {
                 resolve(xhr.response);
@@ -25,13 +25,19 @@ function sendReqeust(method, url, data) {
         xhr.send(data);
     });
 }
+
 function setIndexes(obj, arr) {
     obj[arr].map((element, index) => {
         element.index = index;
     });
 }
 
-
+function readCookie(cookieName) {
+    var re = new RegExp('[; ]' + cookieName + '=([^\\s;]*)');
+    var sMatch = (' ' + document.cookie).match(re);
+    if (cookieName && sMatch) return unescape(sMatch[1]);
+    return '';
+}
 
 
 function createRequestBody(data, valName1, valName2) {
@@ -114,7 +120,7 @@ window.onload = () => {
                                     })
                                     .catch((err) => {
                                         console.error(err);
-                                        alert('Can not save note with title: \n' + data.title);
+                                        alert('Can not save note with title: \n' + this.title);
                                     });
                             },
                             deleteNote() {
@@ -148,13 +154,16 @@ window.onload = () => {
         },
 
         created() {
+            token = readCookie('token');
         },
 
         methods: {
             login() {
                 sendReqeust('POST', BASE_URL + 'auth/login/', createRequestBody({ 'password': '123', 'username': 'su' }, 'password', 'username'))
                     .then((response) => {
-                        console.log(response);
+                        this.token = eval('(' + response + ')').token;
+                        this.logged = true;
+                        document.cookie = 'token='+this.token;
                     })
                     .catch((err) => {
                         console.log({ 'err': err });

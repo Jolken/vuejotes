@@ -7,7 +7,6 @@ module.exports = function (app, db) {
         res.sendFile(APP_ROOT + '/public/notes/notes.html');
     });
     app.post('/auth/login/', (req, res) => {
-        console.log(req.body.password);
         const users = database.collection('users');
         users.findOne({ '_id': req.body.username }, (err, result) => {
 
