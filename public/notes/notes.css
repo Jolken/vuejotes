@@ -9,6 +9,14 @@ a {
     color: inherit;
     text-decoration: none;
 }
+#user {
+    position: relative;
+    opacity: 0.5;
+}
+#user img {
+    width: 8vw;
+    border-radius: 50%; 
+}
 .navig {
     font-size: 2vw;
     font-family: 'Do Hyeon', sans-serif;

@@ -1,10 +1,10 @@
-const BASE_URL = 'https://jolken.herokuapp.com/api/';
-
+//const BASE_URL = 'https://jolken.herokuapp.com/api/';
+const BASE_URL = 'http://127.0.0.1:5000/';
 function sendReqeust(method, url, data) {
     return new Promise((resolve, reject) => {
         var xhr = new XMLHttpRequest();
         xhr.open(method, url, true);
-        xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+        xhr.setRequestHeader("Content-type", "application/json");
         xhr.onload = (() => {
             if (xhr.status >= 200 && xhr.status < 300) {
                 resolve(xhr.response);
@@ -34,10 +34,10 @@ function setIndexes(obj, arr) {
 
 
 
-function createRequestBody(data) {
-    data.title = data.title || 'Note title';
-    data.text = data.text || 'Text of my note';
-    return ('title=' + data.title.replace(/ /g, "+") + '&body=' + data.text.replace(/ /g, "+"))
+function createRequestBody(data, valName1, valName2) {
+    data[valName1] = data[valName1] || 'Note title';
+    data[valName2] = data[valName2] || 'Text of my note';
+    return (valName1 + '=' + data[valName1].replace(/ /g, "+") + '&'+valName2+'=' + data[valName2].replace(/ /g, "+"))
 }
 
 window.onload = () => {
@@ -45,14 +45,16 @@ window.onload = () => {
         el: '#notespace',
         data: {
             notes: [],
+            token: '',
         },
         created: function() {
             this.loadNotes();
         },
         methods : {
             loadNotes() {
-                sendReqeust('GET', BASE_URL + 'notes', {})
+                sendReqeust('POST', BASE_URL + 'api/notes/', {})
                     .then((response) => {
+                        console.log(response);
                         this.notes = [];
                         let notes = eval('(' + response + ')');
                         notes.forEach((note) => {
@@ -65,10 +67,10 @@ window.onload = () => {
                     });
             },
             addNote() {
-                sendReqeust('POST', BASE_URL + 'notes/', createRequestBody({
+                sendReqeust('PUT', BASE_URL + 'api/notes/', createRequestBody({
                     'title': 'Note title',
                     'text': 'Text of my note'
-                }))
+                }, 'title', 'text'))
                     .then((response) => {
                         this.pushNote(eval('(' + response + ')'))
                     })
@@ -103,10 +105,10 @@ window.onload = () => {
                         
                         methods: {
                             saveNote() {
-                                sendReqeust('PUT', BASE_URL + 'notes/' + this.id, createRequestBody({
+                                sendReqeust('PUT', BASE_URL + 'api/notes/' + this.id, createRequestBody({
                                     title: this.title,
                                     text: this.text,
-                                }))
+                                }, 'title', 'text'))
                                     .then((response) => {
                                         console.log(response);
                                     })
@@ -116,7 +118,7 @@ window.onload = () => {
                                     });
                             },
                             deleteNote() {
-                                sendReqeust('DELETE', BASE_URL + 'notes/' + this.id)
+                                sendReqeust('DELETE', BASE_URL + 'api/notes/' + this.id)
                                     .then((response) => {
                                         console.log(response);
                                         notespace.notes.splice(this.index, 1);
@@ -134,4 +136,40 @@ window.onload = () => {
 
 
     });
+    var login = new Vue({
+        el: '#user',
+        data() {
+            return {
+                'username': 'stranger',
+                'token': '',
+                'img': 'https://i.ytimg.com/vi/R51hIY7swcQ/maxresdefault.jpg',
+                'logged': false,
+            }
+        },
+
+        created() {
+        },
+
+        methods: {
+            login() {
+                sendReqeust('POST', BASE_URL + 'auth/login/', createRequestBody({ 'password': '123', 'username': 'su' }, 'password', 'username'))
+                    .then((response) => {
+                        console.log(response);
+                    })
+                    .catch((err) => {
+                        console.log({ 'err': err });
+                    })
+            },
+            register() {
+
+            },
+            changePassword() {
+
+            }
+        },
+        
+
+
+    });
+    console.log(document.cookie);
 }
