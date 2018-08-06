@@ -17,6 +17,9 @@ a {
     width: 8vw;
     border-radius: 50%; 
 }
+#user ul{
+    list-style-type: none;
+}
 .navig {
     font-size: 2vw;
     font-family: 'Do Hyeon', sans-serif;

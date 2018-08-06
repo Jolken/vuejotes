@@ -39,6 +39,40 @@ function readCookie(cookieName) {
     return '';
 }
 
+function setCookie(name, value, options) {
+    options = options || {};
+
+    var expires = options.expires;
+
+    if (typeof expires == "number" && expires) {
+        var d = new Date();
+        d.setTime(d.getTime() + expires * 1000);
+        expires = options.expires = d;
+    }
+    if (expires && expires.toUTCString) {
+        options.expires = expires.toUTCString();
+    }
+
+    value = encodeURIComponent(value);
+
+    var updatedCookie = name + "=" + value;
+
+    for (var propName in options) {
+        updatedCookie += "; " + propName;
+        var propValue = options[propName];
+        if (propValue !== true) {
+            updatedCookie += "=" + propValue;
+        }
+    }
+
+    document.cookie = updatedCookie;
+}
+
+function deleteCookie(name) {
+    setCookie(name, "", {
+        expires: -1
+    })
+}
 
 function createRequestBody(data, valName1, valName2) {
     data[valName1] = data[valName1] || 'Note title';
@@ -150,6 +184,7 @@ window.onload = () => {
                 'token': '',
                 'img': 'https://i.ytimg.com/vi/R51hIY7swcQ/maxresdefault.jpg',
                 'logged': false,
+                'isHidden': true
             }
         },
 
@@ -158,12 +193,16 @@ window.onload = () => {
         },
 
         methods: {
+            showConrolMenu(){
+
+            },
             login() {
                 sendReqeust('POST', BASE_URL + 'auth/login/', createRequestBody({ 'password': '123', 'username': 'su' }, 'password', 'username'))
                     .then((response) => {
                         this.token = eval('(' + response + ')').token;
                         this.logged = true;
-                        document.cookie = 'token='+this.token;
+                        deleteCookie('token');
+                        setCookie('token', this.token, {expires: 10800, path : '/'});
                     })
                     .catch((err) => {
                         console.log({ 'err': err });

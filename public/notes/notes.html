@@ -15,9 +15,19 @@
                     <li class="links"><a href="#">About <i class="fa fa-address-book-o" aria-hidden="true"></i></a></li>
                     <li class="links"><a href="https://www.instagram.com/kui_van_bich/">Instagram <i class="fa fa-instagram" aria-hidden="true"></i></a></li>
                     <li class="links"><a href="https://github.com/Jolken">GitHub <i class="fa fa-github" aria-hidden="true"></i></a></li>
-                    <div id="user" @click="login()"><img src="https://i.ytimg.com/vi/R51hIY7swcQ/maxresdefault.jpg" /></div>
+                    <div id="user" @click="isHidden = !isHidden"><img src="https://i.ytimg.com/vi/R51hIY7swcQ/maxresdefault.jpg" />
+                        <div class="controlMenu" v-if="!isHidden">
+                            <ul>
+                                <li @click="login()">Login</li>
+                                <li @click="register()">Register</li>
+                                <li v-if="logged" @click="changePassword()">Change password</li>
+                            </ul>
+                        </div>
+                    </div>
                 </ul>
             </nav>
+
+           
         </header>
         <section class="notespace" id="notespace">
             <section class="right-panel">

@@ -19,7 +19,7 @@ module.exports = function (app, db) {
                         let token = crypto.randomBytes(64).toString('hex');
                         users.update({ '_id': result['_id'] }, { 'token': token, 'password': result.password, 'date': Date.now() });
                         let options = {
-                            maxAge: 1000 * 60 * 120,
+                            maxAge: 1000 * 60 * 90,
                             httpOnly: true,
                             signed: true
                         }
@@ -105,7 +105,7 @@ module.exports = function (app, db) {
         if (req.body.token) {
 
             database.collection('users').findOne({ 'token': req.body.token }, (err, result) => {
-                if (err || (Date.now() - result.date) > 1000 * 60 * 300) {
+                if (err || (Date.now() - result.date) > 1000 * 60 * 90) {
                     database.collection('admin').find({}).toArray((err, result) => {
                         if (err) {
                             res.send({ 'error': 'An error has occured' });
@@ -190,7 +190,7 @@ module.exports = function (app, db) {
     app.put('/api/notes/', (req, res) => {
         const note = { text: req.body.body, title: req.body.title };
         database.collection('users').findOne({ 'token': req.body.token }, (err, result) => {
-            if (err || (Date.now() - result.date) > 1000 * 60 * 300) {
+            if (err || (Date.now() - result.date) > 1000 * 60 * 90) {
                 res.send({ 'error': 'An error has occurred', 'err': err });
             }
             else {
@@ -210,7 +210,7 @@ module.exports = function (app, db) {
         const details = { '_id': new ObjectID(id) };
         const note = { text: req.body.body, title: req.body.title };
         database.collection('users').findOne({ 'token': req.body.token }, (err, result) => {
-            if (err || (Date.now() - result.date) > 1000 * 60 * 300) {
+            if (err || (Date.now() - result.date) > 1000 * 60 * 90) {
                 res.send({ 'error': 'An error has occurred', 'err': err });
             }
             else {
