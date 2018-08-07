@@ -15,6 +15,9 @@ module.exports = function (app, db) {
                     res.send({ 'error': err });
                 }
                 else {
+                    if (result) {
+
+                    
                     if (result.password == req.body.password) {
                         let token = crypto.randomBytes(64).toString('hex');
                         users.update({ '_id': result['_id'] }, { 'token': token, 'password': result.password, 'date': Date.now() });
@@ -28,6 +31,7 @@ module.exports = function (app, db) {
                     }
                     else {
                         res.send({ 'login': 'failed' });
+                    }
                     }
                 }
             }
@@ -105,6 +109,9 @@ module.exports = function (app, db) {
         if (req.body.token) {
 
             database.collection('users').findOne({ 'token': req.body.token }, (err, result) => {
+                if (result){
+
+                
                 if (err || (Date.now() - result.date) > 1000 * 60 * 90) {
                     database.collection('admin').find({}).toArray((err, result) => {
                         if (err) {
@@ -128,6 +135,7 @@ module.exports = function (app, db) {
                             res.json(result);
                         }
                     });
+                }
                 }
             });
         }
@@ -162,10 +170,16 @@ module.exports = function (app, db) {
         const id = req.params.id;
         const details = { '_id': new ObjectID(id) };
         database.collection('users').findOne({ 'token': req.body.token }, (err, result) => {
+            if (result){
+
+            
             if (err) {
                 res.send({ 'err': err });
             }
             else {
+                if (result.hasOwnProperty('_id')){
+
+                
                 database.collection(result['_id']).remove(details, (err, item) => {
                     if (err) {
                         res.send({ 'err': err });
@@ -174,7 +188,9 @@ module.exports = function (app, db) {
                         res.send('Note ' + id + ' deleted');
                     }
                 });
+                }
             }
+        }
             /*
             database.collection('notes').remove(details, (err, item) => {
                 if (err) {
@@ -188,8 +204,11 @@ module.exports = function (app, db) {
         });
     });
     app.put('/api/notes/', (req, res) => {
-        const note = { text: req.body.body, title: req.body.title };
+        const note = { text: req.body.text, title: req.body.title };
         database.collection('users').findOne({ 'token': req.body.token }, (err, result) => {
+        if (result){
+
+        
             if (err || (Date.now() - result.date) > 1000 * 60 * 90) {
                 res.send({ 'error': 'An error has occurred', 'err': err });
             }
@@ -203,26 +222,32 @@ module.exports = function (app, db) {
                     }
                 });
             }
+        }
         });
     });
     app.put('/api/notes/:id', (req, res) => {
         const id = req.params.id;
         const details = { '_id': new ObjectID(id) };
-        const note = { text: req.body.body, title: req.body.title };
+        const note = { text: req.body.text, title: req.body.title };
         database.collection('users').findOne({ 'token': req.body.token }, (err, result) => {
-            if (err || (Date.now() - result.date) > 1000 * 60 * 90) {
-                res.send({ 'error': 'An error has occurred', 'err': err });
+            if (result){
+            if (result.hasOwnProperty('_id')){
+
+                if (err || (Date.now() - result.date) > 1000 * 60 * 90) {
+                    res.send({ 'error': 'An error has occurred', 'err': err });
+                }
+                else {
+                    database.collection(result['_id']).update(details, note, (err, result) => {
+                        if (err) {
+                            res.send(err);
+                        }
+                        else {
+                            res.send(result);
+                        }
+                    });
+                }
             }
-            else {
-                database.collection(result['_id']).update(details, note, (err, result) => {
-                    if (err) {
-                        res.send(err);
-                    }
-                    else {
-                        res.send(result);
-                    }
-                });
-            }
+        }
         });
     });
 };

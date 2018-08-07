@@ -19,14 +19,13 @@
                         <div class="controlMenu" v-if="!isHidden">
                             <ul>
                                 <li @click="login()">Login</li>
-                                <li @click="register()">Register</li>
+                                <li @click="register()">Sign Up</li>
                                 <li v-if="logged" @click="changePassword()">Change password</li>
                             </ul>
                         </div>
-                    </div>
                 </ul>
             </nav>
-
+            
            
         </header>
         <section class="notespace" id="notespace">
@@ -52,7 +51,14 @@
                 
             </div>
         </section>
-
+        <div class="actionmenu" v-if="!isHidden" id="actionmenu">
+                <span v-if="action!='Change Password'">Username<br><input v-model="username"></span>
+                <span v-if="action=='Change Password'">Old Password<br><input type="password" v-model="passwordOld"></span>
+                <span>Password<br><input type="password" v-model="password"></span>                
+                <button @click="identifyAction()">{{ action }}</button>
+                <i class="fa fa-times" aria-hidden="true" @click="isHidden=!isHidden"></i>
+        </div>
+    </div>
     </body>
 
     

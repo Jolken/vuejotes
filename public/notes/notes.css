@@ -49,6 +49,7 @@ li.links:hover {
     padding: 3px;
     background-color: #ED9B40;
     border: 1px solid #f1f1f1;
+    height: 30vh;
     
 }
 .note textarea, input {
@@ -126,4 +127,21 @@ li.links:hover {
 }
 .right-buttons > i {
     margin-top: 1%;
+}
+.actionmenu {
+    position: absolute;
+    left: 30%;
+    top: 20%;
+    width: 40%;
+    height: auto;
+    background: #496490;
+    display: flex;
+    flex-direction: column;
+    padding: 1%;
+    justify-content: flex-start;
+}
+.fa-times {
+    position: absolute;
+    top: 5%;
+    right: 5%;
 }

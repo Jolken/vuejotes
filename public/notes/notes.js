@@ -1,5 +1,6 @@
 //const BASE_URL = 'https://jolken.herokuapp.com/api/';
 const BASE_URL = 'http://127.0.0.1:5000/';
+var token = readCookie('token');
 function sendReqeust(method, url, data) {
     return new Promise((resolve, reject) => {
         var xhr = new XMLHttpRequest();
@@ -75,12 +76,76 @@ function deleteCookie(name) {
 }
 
 function createRequestBody(data, valName1, valName2) {
+    if (!data) {
+        data = {};
+    }
     data[valName1] = data[valName1] || 'Note title';
     data[valName2] = data[valName2] || 'Text of my note';
-    return (valName1 + '=' + data[valName1].replace(/ /g, "+") + '&'+valName2+'=' + data[valName2].replace(/ /g, "+"))
+    return (valName1 + '=' + data[valName1].replace(/ /g, "+") + '&'+valName2+'=' + data[valName2].replace(/ /g, "+")+'&token='+token);
 }
 
 window.onload = () => {
+    var actionmenu = new Vue({ 
+        el: '#actionmenu',
+        data() {
+            return {
+                isHidden: true,
+                action: '',
+                username: '',
+                password: '',
+                passwordOld: '',
+                      
+            }
+        },
+        methods: {
+            identifyAction() {
+                if (this.action == 'Login'){
+                    this.login()
+                }
+                else if (this.action == 'Sign up') {
+                    this.register()
+                }
+                else if (this.action == 'Change Password') {
+
+                }
+                this.isHidden = true;
+            },
+            login(){
+                sendReqeust('POST', BASE_URL + 'auth/login/', createRequestBody({ 'password': this.password, 'username': this.username }, 'password', 'username'))
+                .then((response) => {
+                    console.log(response);
+                    user.token = eval('(' + response + ')').token;
+                    token = user.token;
+                    user.logged = true;
+                    user.username = this.username;
+                    deleteCookie('token');
+                    setCookie('token', user.token, {expires: 10800, path : '/'});
+                })
+                .catch((err) => {
+                    console.log({ 'err': err });
+                })
+            },
+            register() {
+                sendReqeust('POST', BASE_URL + 'auth/register', createRequestBody({ 'password': this.password, 'username': this.username}, 'password', 'username'))
+                .then((response) => {
+                    console.log(response);
+                })
+                .catch((err) => {
+                    console.log(err);
+                });
+            },
+            changePassword() {
+                sendReqeust('POST', BASE_URL+ 'auth/register', createRequestBody({ 'password': this.password, 'username': this.username}, 'password', 'username'))
+                .then((response) => {
+                    alert(response);
+                })
+                .catch((err) => {
+                    alert(err);
+                });
+            }
+        },
+
+    });     
     var notespace = new Vue({
         el: '#notespace',
         data: {
@@ -92,7 +157,7 @@ window.onload = () => {
         },
         methods : {
             loadNotes() {
-                sendReqeust('POST', BASE_URL + 'api/notes/', {})
+                sendReqeust('POST', BASE_URL + 'api/notes/', createRequestBody({}))
                     .then((response) => {
                         console.log(response);
                         this.notes = [];
@@ -107,6 +172,10 @@ window.onload = () => {
                     });
             },
             addNote() {
+                console.log(createRequestBody({
+                    'title': 'Note title',
+                    'text': 'Text of my note'
+                }, 'title', 'text'));
                 sendReqeust('PUT', BASE_URL + 'api/notes/', createRequestBody({
                     'title': 'Note title',
                     'text': 'Text of my note'
@@ -158,7 +227,7 @@ window.onload = () => {
                                     });
                             },
                             deleteNote() {
-                                sendReqeust('DELETE', BASE_URL + 'api/notes/' + this.id)
+                                sendReqeust('DELETE', BASE_URL + 'api/notes/' + this.id, createRequestBody())
                                     .then((response) => {
                                         console.log(response);
                                         notespace.notes.splice(this.index, 1);
@@ -176,7 +245,7 @@ window.onload = () => {
 
 
     });
-    var login = new Vue({
+    var user = new Vue({
         el: '#user',
         data() {
             return {
@@ -193,31 +262,23 @@ window.onload = () => {
         },
 
         methods: {
-            showConrolMenu(){
-
-            },
             login() {
-                sendReqeust('POST', BASE_URL + 'auth/login/', createRequestBody({ 'password': '123', 'username': 'su' }, 'password', 'username'))
-                    .then((response) => {
-                        this.token = eval('(' + response + ')').token;
-                        this.logged = true;
-                        deleteCookie('token');
-                        setCookie('token', this.token, {expires: 10800, path : '/'});
-                    })
-                    .catch((err) => {
-                        console.log({ 'err': err });
-                    })
+                actionmenu.isHidden = false;
+                actionmenu.action = 'Login';
             },
             register() {
-
+                actionmenu.isHidden = false;
+                actionmenu.action = 'Sign up';
             },
             changePassword() {
 
             }
         },
-        
+
+   
 
 
     });
+    
     console.log(document.cookie);
 }
